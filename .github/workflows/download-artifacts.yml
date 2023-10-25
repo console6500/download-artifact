@@ -1,0 +1,56 @@
+name: Download Artifacts
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create public directory
+        run: mkdir public
+
+      - name: Create files inside public directory
+        run: |
+          echo "Contents of file1" > public/file1.txt
+          echo "Contents of file2" > public/file2.txt
+          echo "Contents of file3" > public/file3.txt
+
+      - name: Upload public directory as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: public-artifact
+          path: public
+
+  job2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download and extract artifact with directory structure
+        uses: actions/download-artifact@v2
+        with:
+          name: public-artifact
+          path: artifact
+
+      - name: List files with directory structure
+        run: |
+          tree artifact
+
+  job3:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download and extract artifact without directory structure
+        uses: actions/download-artifact@v2
+        with:
+          name: public-artifact
+          path: artifact-no-structure
+          extract: true
+
+      - name: List files without directory structure
+        run: |
+          tree artifact-no-structure
